@@ -15,7 +15,15 @@ const displayControllerModule = (function () {
   const displayController = {
     renderBoard: function () {
       const gameBoardContainer = document.querySelector("#game-board");
-      gameBoardContainer.innerHTML = gameBoardModule.gameBoard.gameBoardArray;
+      const boardCell = document.createElement("div");
+      boardCell.className = "board-cell";
+
+      //   gameBoardContainer.innerHTML = gameBoardModule.gameBoard.gameBoardArray;
+      for (let i = 0; i < 9; i++)
+        gameBoardContainer.insertAdjacentElement(
+          "beforeend",
+          boardCell.cloneNode(true)
+        );
     },
     renderPlayers: function () {},
   };
