@@ -1,18 +1,4 @@
-// modules
-const name = "James";
-
-const person = { first: name };
-
-console.log(person);
-
-const sayHelloLinting = (fName) => {
-  console.log(`Hello linting, ${fName}`);
-};
-
-
-
-
-
+// Game board
 const gameBoardModule = (function () {
   const gameBoard = {
     gameBoardArray: [
@@ -49,7 +35,7 @@ const gameBoardModule = (function () {
   return { gameBoard, outerArrayMap, innerArrayMap };
 })();
 
-
+// Render display
 const displayControllerModule = (function () {
   const gameBoardContainer = document.querySelector("#game-board");
   const boardCell = document.createElement("div");
@@ -66,34 +52,41 @@ const displayControllerModule = (function () {
       }
     },
     renderSelction: function (playerName) {
-     let currentSelection =  gameBoardContainer.addEventListener("click", (event) => {
+      gameBoardContainer.addEventListener("click", (event) => {
         let mapValue = event.target.getAttribute("data-board-cell");
 
         let outerArrayValue = gameBoardModule.outerArrayMap[mapValue];
         let innerArrayValue = gameBoardModule.innerArrayMap[mapValue];
 
-        gameBoardModule.gameBoard.gameBoardArray[outerArrayValue].splice(
-          innerArrayValue,
-          1,
-          playerName
-        );
-        event.target.innerHTML = playerName;
+        if (event.target.innerHTML != "X" || "O") {
+          gameBoardModule.gameBoard.gameBoardArray[outerArrayValue].splice(
+            innerArrayValue,
+            1,
+            playerName
+          );
+          event.target.innerHTML = playerName;
+        }
       });
     },
     renderPlayers: function () {},
   };
 
-  return { displayController,  };
+  return { displayController };
 })();
 
+// Game logic
 const gameLogicModule = (function () {
   const gameLogic = {
-    rounds: function () {},
+    rounds: function rounds() {
+      const playerOne = player();
 
-    spaceTaken: function () {
-      if (currentSelection)
+      playerOne.makeSelection("O");
     },
+
+    spaceTaken: function spaceTaken() {},
   };
+
+  return { gameLogic };
 })();
 
 // player factory
@@ -103,10 +96,6 @@ const player = (playerName) => {
 
   return { makeSelection };
 };
- 
-const playerOne = player();
-
-playerOne.makeSelection("ox");
 
 displayControllerModule.displayController.renderBoard();
-
+gameLogicModule.gameLogic.rounds();
