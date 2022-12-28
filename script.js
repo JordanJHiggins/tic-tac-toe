@@ -1,4 +1,18 @@
 // modules
+const name = "James";
+
+const person = { first: name };
+
+console.log(person);
+
+const sayHelloLinting = (fName) => {
+  console.log(`Hello linting, ${fName}`);
+};
+
+
+
+
+
 const gameBoardModule = (function () {
   const gameBoard = {
     gameBoardArray: [
@@ -35,6 +49,7 @@ const gameBoardModule = (function () {
   return { gameBoard, outerArrayMap, innerArrayMap };
 })();
 
+
 const displayControllerModule = (function () {
   const gameBoardContainer = document.querySelector("#game-board");
   const boardCell = document.createElement("div");
@@ -50,8 +65,8 @@ const displayControllerModule = (function () {
         );
       }
     },
-    renderSelction: function () {
-      gameBoardContainer.addEventListener("click", (event) => {
+    renderSelction: function (playerName) {
+     let currentSelection =  gameBoardContainer.addEventListener("click", (event) => {
         let mapValue = event.target.getAttribute("data-board-cell");
 
         let outerArrayValue = gameBoardModule.outerArrayMap[mapValue];
@@ -60,27 +75,38 @@ const displayControllerModule = (function () {
         gameBoardModule.gameBoard.gameBoardArray[outerArrayValue].splice(
           innerArrayValue,
           1,
-          "x"
+          playerName
         );
-        event.target.innerHTML = "x";
+        event.target.innerHTML = playerName;
       });
     },
     renderPlayers: function () {},
   };
 
-  return { displayController };
+  return { displayController,  };
 })();
 
 const gameLogicModule = (function () {
-  const gameLogic = {};
+  const gameLogic = {
+    rounds: function () {},
+
+    spaceTaken: function () {
+      if (currentSelection)
+    },
+  };
 })();
 
 // player factory
-const player = (name) => {
-  let playerName = name;
+const player = (playerName) => {
+  const makeSelection = (playerName) =>
+    displayControllerModule.displayController.renderSelction(playerName);
 
-  return {};
+  return { makeSelection };
 };
+ 
+const playerOne = player();
+
+playerOne.makeSelection("ox");
 
 displayControllerModule.displayController.renderBoard();
-displayControllerModule.displayController.renderSelction();
+
