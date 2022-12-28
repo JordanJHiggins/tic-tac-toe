@@ -54,7 +54,6 @@ const displayControllerModule = (function () {
     renderSelction: function (playerName) {
       gameBoardContainer.addEventListener("click", (event) => {
         let mapValue = event.target.getAttribute("data-board-cell");
-
         let outerArrayValue = gameBoardModule.outerArrayMap[mapValue];
         let innerArrayValue = gameBoardModule.innerArrayMap[mapValue];
 
@@ -71,26 +70,36 @@ const displayControllerModule = (function () {
     renderPlayers: function () {},
   };
 
-  return { displayController };
+  return { displayController, gameBoardContainer };
 })();
 
 // Game logic
 const gameLogicModule = (function () {
   const gameLogic = {
-    rounds: function rounds() {
+    rounds: function () {
       const playerOne = player();
+      const playerTwo = player();
+      const gameBoardContainer = displayControllerModule.gameBoardContainer;
+      let roundTracker = 1;
 
-      playerOne.makeSelection("O");
+      gameBoardContainer.addEventListener("click", () => {
+        if (roundTracker % 2 === 0) {
+          playerOne.makeSelection("O");
+          console.log("binggggg");
+          roundTracker++;
+        } else {
+          playerTwo.makeSelection("x");
+          roundTracker++;
+        }
+      });
     },
-
-    spaceTaken: function spaceTaken() {},
   };
 
   return { gameLogic };
 })();
 
 // player factory
-const player = (playerName) => {
+const player = () => {
   const makeSelection = (playerName) =>
     displayControllerModule.displayController.renderSelction(playerName);
 
