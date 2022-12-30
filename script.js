@@ -51,18 +51,24 @@ const gameBoardModule = (function () {
       // event.target.innerHTML = playerName;
     },
     rounds: function (containerEvent) {
-      const playerOne = player("x");
+      const playerOne = player("X");
       const playerTwo = player("O");
 
       if (gameLogic.roundTracker % 2 === 0) {
         containerEvent.target.classList.add("spaceTaken");
 
         gameLogic.playerMove(playerTwo.getName(), containerEvent);
-
+        displayControllerModule.displayController.renderTurn(
+          playerOne.getName()
+        );
         gameLogic.roundTracker += 1;
       } else {
         containerEvent.target.classList.add("spaceTaken");
+
         gameLogic.playerMove(playerOne.getName(), containerEvent);
+        displayControllerModule.displayController.renderTurn(
+          playerTwo.getName()
+        );
         gameLogic.roundTracker += 1;
       }
     },
@@ -98,7 +104,11 @@ const displayControllerModule = (function () {
     renderSelction: function (playerName, event) {
       event.target.innerHTML = playerName;
     },
-    renderPlayers: function () {},
+    renderTurn: function (currentTurn) {
+      const playerTurn = document.getElementById("player-turn");
+
+      playerTurn.innerHTML = `Player ${currentTurn}'s turn`;
+    },
   };
 
   return { displayController };
