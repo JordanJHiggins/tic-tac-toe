@@ -34,28 +34,40 @@ const gameBoardModule = (function () {
 
   const gameLogic = {
     roundTracker: 1,
-    rounds: function (myEvent) {
+    playerMove: function (playerName, containerEvent) {
+      let mapValue = containerEvent.target.getAttribute("data-board-cell");
+      let outerArrayValue = gameBoardModule.outerArrayMap[mapValue];
+      let innerArrayValue = gameBoardModule.innerArrayMap[mapValue];
+
+      gameBoardModule.gameBoard.gameBoardArray[outerArrayValue].splice(
+        innerArrayValue,
+        1,
+        playerName
+      );
+      displayControllerModule.displayController.renderSelction(
+        playerName,
+        containerEvent
+      );
+      // event.target.innerHTML = playerName;
+    },
+    rounds: function (containerEvent) {
       const playerOne = player("x");
       const playerTwo = player("O");
 
       if (gameLogic.roundTracker % 2 === 0) {
-        myEvent.target.classList.add("spaceTaken");
+        containerEvent.target.classList.add("spaceTaken");
 
-        displayControllerModule.displayController.renderSelction(
-          playerTwo.getName()
-        );
-        console.log("binggggg");
+        gameLogic.playerMove(playerTwo.getName(), containerEvent);
+
         gameLogic.roundTracker += 1;
       } else {
-        myEvent.target.classList.add("spaceTaken");
-        displayControllerModule.displayController.renderSelction(
-          playerOne.getName()
-        );
+        containerEvent.target.classList.add("spaceTaken");
+        gameLogic.playerMove(playerOne.getName(), containerEvent);
         gameLogic.roundTracker += 1;
       }
     },
   };
-  // Validate selection
+  // Check if space is taken
   const gameBoardContainer = document.querySelector("#game-board");
   gameBoardContainer.addEventListener("click", (event) => {
     if (event.target.classList.contains("spaceTaken")) return;
@@ -83,16 +95,7 @@ const displayControllerModule = (function () {
       }
     },
 
-    renderSelction: function (playerName) {
-      let mapValue = event.target.getAttribute("data-board-cell");
-      let outerArrayValue = gameBoardModule.outerArrayMap[mapValue];
-      let innerArrayValue = gameBoardModule.innerArrayMap[mapValue];
-
-      gameBoardModule.gameBoard.gameBoardArray[outerArrayValue].splice(
-        innerArrayValue,
-        1,
-        playerName
-      );
+    renderSelction: function (playerName, event) {
       event.target.innerHTML = playerName;
     },
     renderPlayers: function () {},
