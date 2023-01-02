@@ -1,3 +1,9 @@
+const player = (playerName) => {
+  const getName = () => playerName;
+
+  return { getName };
+};
+
 // Game board
 const gameBoardModule = (function () {
   let gameBoardArray = [
@@ -41,6 +47,8 @@ const gameBoardModule = (function () {
     [2, 4, 6],
   ];
 
+  const playerOne = player("X");
+  const playerTwo = player("O");
   let roundTracker = 1;
 
   const playerMove = (playerName, containerEvent) => {
@@ -53,9 +61,6 @@ const gameBoardModule = (function () {
   };
 
   const playRound = (containerEvent) => {
-    const playerOne = player("X");
-    const playerTwo = player("O");
-
     if (roundTracker % 2 === 0) {
       containerEvent.target.classList.add("spaceTakenO");
 
@@ -84,12 +89,15 @@ const gameBoardModule = (function () {
     });
   };
 
-  // Check if space is taken
+  // Check if space is taken and if winner exists
   const gameBoardContainer = document.querySelector("#game-board");
   gameBoardContainer.addEventListener("click", (event) => {
     if (event.target.innerHTML != "") return;
     playRound(this.event);
-    if (checkWin()) console.log("win");
+    if (checkWin()) {
+      displayController.renderWinner(event.target.innerHTML);
+      console.log("win");
+    }
   });
 
   return { outerArrayMap, innerArrayMap };
@@ -99,7 +107,7 @@ const gameBoardModule = (function () {
 const displayController = (function () {
   const gameBoardContainer = document.querySelector("#game-board");
   const boardCell = document.createElement("div");
-
+  const playerTurn = document.getElementById("player-turn");
   const renderBoard = () => {
     for (let i = 0; i < 9; i++) {
       boardCell.setAttribute("data-board-cell", i);
@@ -116,17 +124,12 @@ const displayController = (function () {
   };
 
   const renderTurn = (currentTurn) => {
-    const playerTurn = document.getElementById("player-turn");
-
     playerTurn.innerHTML = `Player ${currentTurn}'s turn`;
   };
+
+  const renderWinner = (currentTurn) => {
+    playerTurn.innerHTML = `Player ${currentTurn} Wins!`;
+  };
   renderBoard();
-  return { renderBoard, renderSelction, renderTurn };
+  return { renderBoard, renderSelction, renderTurn, renderWinner };
 })();
-
-// player factory
-const player = (playerName) => {
-  const getName = () => playerName;
-
-  return { getName };
-};
