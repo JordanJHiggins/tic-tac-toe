@@ -5,7 +5,7 @@ const player = (playerName) => {
 };
 
 // Game board
-const gameBoardModule = (function () {
+const gameBoard = (function () {
   let gameBoardArray = [
     ["", "", ""],
     ["", "", ""],
@@ -49,7 +49,6 @@ const gameBoardModule = (function () {
 
   const playerOne = player("X");
   const playerTwo = player("O");
-  // const allCell = document.querySelectorAll("[data-board-cell]");
   let roundTracker = 1;
 
   const playerMove = (playerName, containerEvent) => {
@@ -57,25 +56,29 @@ const gameBoardModule = (function () {
     let outerArrayValue = outerArrayMap[mapValue];
     let innerArrayValue = innerArrayMap[mapValue];
 
-    gameBoardArray[outerArrayValue].splice(innerArrayValue, 1, playerName);
+    gameBoard.gameBoardArray[outerArrayValue].splice(
+      innerArrayValue,
+      1,
+      playerName
+    );
     displayController.renderSelction(playerName, containerEvent);
   };
 
   const playRound = (containerEvent) => {
-    if (roundTracker % 2 === 0) {
+    if (gameBoard.roundTracker % 2 === 0) {
       containerEvent.target.classList.add("spaceTakenO");
 
       playerMove(playerTwo.getName(), containerEvent);
       displayController.renderTurn(playerOne.getName());
 
-      roundTracker++;
+      gameBoard.roundTracker++;
     } else {
       containerEvent.target.classList.add("spaceTakenX");
 
       playerMove(playerOne.getName(), containerEvent);
       displayController.renderTurn(playerTwo.getName());
 
-      roundTracker++;
+      gameBoard.roundTracker++;
     }
   };
 
@@ -101,7 +104,13 @@ const gameBoardModule = (function () {
     }
   });
 
-  return { outerArrayMap, innerArrayMap, checkWin };
+  return {
+    outerArrayMap,
+    innerArrayMap,
+    checkWin,
+    gameBoardArray,
+    roundTracker,
+  };
 })();
 
 // Render display
@@ -134,14 +143,26 @@ const displayController = (function () {
     playerTurn.innerHTML = `Player ${currentTurn} Wins!`;
   };
 
-  restartButton.addEventListener("click", () => {
-    const allBoardCells = gameBoardContainer.querySelectorAll("div");
+  const restartGame = () => {
+    restartButton.addEventListener("click", () => {
+      const allBoardCells = gameBoardContainer.querySelectorAll("div");
+      gameBoard.roundTracker = 1;
 
-    allBoardCells.forEach((cell) => {
-      cell.innerHTML = "";
+      allBoardCells.forEach((cell) => {
+        cell.innerHTML = "";
+        cell.className = "";
+
+        gameBoard.gameBoardArray = gameBoard.gameBoardArray.map(() => [
+          "",
+          "",
+          "",
+        ]);
+
+        renderTurn("X");
+      });
     });
-  });
-
+  };
+  restartGame();
   renderBoard();
-  return { renderBoard, renderSelction, renderTurn, renderWinner };
+  return { renderBoard, renderSelction, renderTurn, renderWinner, restartGame };
 })();
