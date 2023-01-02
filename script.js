@@ -1,12 +1,10 @@
 // Game board
 const gameBoardModule = (function () {
-  const gameBoard = {
-    gameBoardArray: [
-      ["", "", ""],
-      ["", "", ""],
-      ["", "", ""],
-    ],
-  };
+  let gameBoardArray = [
+    ["", "", ""],
+    ["", "", ""],
+    ["", "", ""],
+  ];
 
   const outerArrayMap = {
     0: "0",
@@ -32,115 +30,98 @@ const gameBoardModule = (function () {
     8: "2",
   };
 
-  const gameLogic = {
-    roundTracker: 1,
+  const winCombo = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
 
-    playerMove: function (playerName, containerEvent) {
-      let mapValue = containerEvent.target.getAttribute("data-board-cell");
-      let outerArrayValue = gameBoardModule.outerArrayMap[mapValue];
-      let innerArrayValue = gameBoardModule.innerArrayMap[mapValue];
+  let roundTracker = 1;
 
-      gameBoardModule.gameBoard.gameBoardArray[outerArrayValue].splice(
-        innerArrayValue,
-        1,
-        playerName
-      );
-      displayControllerModule.displayController.renderSelction(
-        playerName,
-        containerEvent
-      );
-    },
+  const playerMove = (playerName, containerEvent) => {
+    let mapValue = containerEvent.target.getAttribute("data-board-cell");
+    let outerArrayValue = outerArrayMap[mapValue];
+    let innerArrayValue = innerArrayMap[mapValue];
 
-    rounds: function (containerEvent) {
-      const playerOne = player("X");
-      const playerTwo = player("O");
-      // gameLogic.gameOver();
-      if (gameLogic.roundTracker % 2 === 0) {
-        containerEvent.target.classList.add("spaceTakenO");
+    gameBoardArray[outerArrayValue].splice(innerArrayValue, 1, playerName);
+    displayController.renderSelction(playerName, containerEvent);
+  };
 
-        gameLogic.playerMove(playerTwo.getName(), containerEvent);
-        displayControllerModule.displayController.renderTurn(
-          playerOne.getName()
+  const playRound = (containerEvent) => {
+    const playerOne = player("X");
+    const playerTwo = player("O");
+
+    if (roundTracker % 2 === 0) {
+      containerEvent.target.classList.add("spaceTakenO");
+
+      playerMove(playerTwo.getName(), containerEvent);
+      displayController.renderTurn(playerOne.getName());
+
+      roundTracker++;
+    } else {
+      containerEvent.target.classList.add("spaceTakenX");
+
+      playerMove(playerOne.getName(), containerEvent);
+      displayController.renderTurn(playerTwo.getName());
+
+      roundTracker++;
+    }
+  };
+
+  const checkWin = () => {
+    const allCell = document.querySelectorAll("[data-board-cell]");
+    return winCombo.some((combination) => {
+      return combination.every((index) => {
+        return allCell[index].classList.contains(
+          "spaceTakenX" || "spaceTakenO"
         );
-
-        gameLogic.roundTracker += 1;
-      } else {
-        containerEvent.target.classList.add("spaceTakenX");
-
-        gameLogic.playerMove(playerOne.getName(), containerEvent);
-        displayControllerModule.displayController.renderTurn(
-          playerTwo.getName()
-        );
-        gameLogic.roundTracker += 1;
-      }
-    },
-
-    winCombo: (winCombo = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ]),
-
-    checkWin: function () {
-      const allCell = document.querySelectorAll("[data-board-cell]");
-      return gameBoardModule.gameLogic.winCombo.some((combination) => {
-        return combination.every((index) => {
-          return allCell[index].classList.contains(
-            "spaceTakenX" || "spaceTakenO"
-          );
-        });
       });
-    },
+    });
   };
 
   // Check if space is taken
   const gameBoardContainer = document.querySelector("#game-board");
   gameBoardContainer.addEventListener("click", (event) => {
-    if (event.target.classList.contains("spaceTakenX" || "spaceTaken)4"))
-      return;
-
-    gameLogic.rounds(this.event);
-    if (gameBoardModule.gameLogic.checkWin()) {
-      console.log("win");
-    }
+    if (event.target.innerHTML != "") return;
+    playRound(this.event);
+    if (checkWin()) console.log("win");
   });
 
-  return { gameBoard, outerArrayMap, innerArrayMap, gameLogic };
+  return { outerArrayMap, innerArrayMap };
 })();
 
 // Render display
-const displayControllerModule = (function () {
+const displayController = (function () {
   const gameBoardContainer = document.querySelector("#game-board");
   const boardCell = document.createElement("div");
 
-  const displayController = {
-    renderBoard: function () {
-      for (let i = 0; i < 9; i++) {
-        boardCell.setAttribute("data-board-cell", i);
-        boardCell.className = "board-cell";
-        gameBoardContainer.insertAdjacentElement(
-          "beforeend",
-          boardCell.cloneNode(true)
-        );
-      }
-    },
+  const renderBoard = () => {
+    for (let i = 0; i < 9; i++) {
+      boardCell.setAttribute("data-board-cell", i);
 
-    renderSelction: function (playerName, event) {
-      event.target.innerHTML = playerName;
-    },
-    renderTurn: function (currentTurn) {
-      const playerTurn = document.getElementById("player-turn");
-
-      playerTurn.innerHTML = `Player ${currentTurn}'s turn`;
-    },
+      gameBoardContainer.insertAdjacentElement(
+        "beforeend",
+        boardCell.cloneNode(true)
+      );
+    }
   };
 
-  return { displayController };
+  const renderSelction = (playerName, event) => {
+    event.target.innerHTML = playerName;
+  };
+
+  const renderTurn = (currentTurn) => {
+    const playerTurn = document.getElementById("player-turn");
+
+    playerTurn.innerHTML = `Player ${currentTurn}'s turn`;
+  };
+  renderBoard();
+  return { renderBoard, renderSelction, renderTurn };
 })();
 
 // player factory
@@ -149,5 +130,3 @@ const player = (playerName) => {
 
   return { getName };
 };
-
-displayControllerModule.displayController.renderBoard();
