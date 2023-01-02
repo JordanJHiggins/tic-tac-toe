@@ -49,6 +49,7 @@ const gameBoardModule = (function () {
 
   const playerOne = player("X");
   const playerTwo = player("O");
+  // const allCell = document.querySelectorAll("[data-board-cell]");
   let roundTracker = 1;
 
   const playerMove = (playerName, containerEvent) => {
@@ -100,14 +101,16 @@ const gameBoardModule = (function () {
     }
   });
 
-  return { outerArrayMap, innerArrayMap };
+  return { outerArrayMap, innerArrayMap, checkWin };
 })();
 
 // Render display
 const displayController = (function () {
   const gameBoardContainer = document.querySelector("#game-board");
   const boardCell = document.createElement("div");
+  const restartButton = document.querySelector(".restart-button");
   const playerTurn = document.getElementById("player-turn");
+
   const renderBoard = () => {
     for (let i = 0; i < 9; i++) {
       boardCell.setAttribute("data-board-cell", i);
@@ -130,6 +133,15 @@ const displayController = (function () {
   const renderWinner = (currentTurn) => {
     playerTurn.innerHTML = `Player ${currentTurn} Wins!`;
   };
+
+  restartButton.addEventListener("click", () => {
+    const allBoardCells = gameBoardContainer.querySelectorAll("div");
+
+    allBoardCells.forEach((cell) => {
+      cell.innerHTML = "";
+    });
+  });
+
   renderBoard();
   return { renderBoard, renderSelction, renderTurn, renderWinner };
 })();
