@@ -82,13 +82,11 @@ const gameBoard = (function () {
     }
   };
 
-  const checkWin = () => {
+  const checkWin = (containerEvent) => {
     const allCell = document.querySelectorAll("[data-board-cell]");
     return winCombo.some((combination) => {
       return combination.every((index) => {
-        return allCell[index].classList.contains(
-          "spaceTakenX" || "spaceTakenO"
-        );
+        return allCell[index].classList.contains(`spaceTaken${containerEvent}`);
       });
     });
   };
@@ -98,7 +96,7 @@ const gameBoard = (function () {
   gameBoardContainer.addEventListener("click", (event) => {
     if (event.target.innerHTML != "") return;
     playRound(this.event);
-    if (checkWin()) {
+    if (checkWin(event.target.innerHTML)) {
       displayController.renderWinner(event.target.innerHTML);
       console.log("win");
     }
