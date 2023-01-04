@@ -84,6 +84,7 @@ const gameBoard = (function () {
 
   const checkWin = (containerEvent) => {
     const allCell = document.querySelectorAll("[data-board-cell]");
+
     return winCombo.some((combination) => {
       return combination.every((index) => {
         return allCell[index].classList.contains(`spaceTaken${containerEvent}`);
@@ -91,14 +92,29 @@ const gameBoard = (function () {
     });
   };
 
+  const checkDraw = () => {
+    const allCell = document.querySelectorAll("[data-board-cell]");
+    return [...allCell].every((allCell) => {
+      return (
+        allCell.classList.contains("spaceTakenX") ||
+        allCell.classList.contains("spaceTakenO")
+      );
+    });
+  };
+
   // Check if space is taken and if winner exists
   const gameBoardContainer = document.querySelector("#game-board");
   gameBoardContainer.addEventListener("click", (event) => {
     if (event.target.innerHTML != "") return;
+
     playRound(this.event);
+
     if (checkWin(event.target.innerHTML)) {
       displayController.renderWinner(event.target.innerHTML);
       console.log("win");
+    }
+    if (checkDraw()) {
+      console.log("draw!");
     }
   });
 
