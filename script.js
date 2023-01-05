@@ -102,22 +102,22 @@ const gameBoard = (function () {
     });
   };
 
-  // Check if space is taken and if winner exists
-  const gameBoardContainer = document.querySelector("#game-board");
-  gameBoardContainer.addEventListener("click", (event) => {
-    if (event.target.innerHTML != "") return;
+  const gameFlow = () => {
+    const gameBoardContainer = document.querySelector("#game-board");
+    gameBoardContainer.addEventListener("click", (event) => {
+      if (event.target.innerHTML != "") return;
 
-    playRound(this.event);
+      playRound(this.event);
 
-    if (checkWin(event.target.innerHTML)) {
-      displayController.renderWinner(event.target.innerHTML);
-      console.log("win");
-    }
-    if (checkDraw()) {
-      console.log("draw!");
-    }
-  });
+      if (checkWin(event.target.innerHTML)) {
+        displayController.renderWinner(event.target.innerHTML);
+      } else if (checkDraw()) {
+        displayController.renderDraw();
+      }
+    });
+  };
 
+  gameFlow();
   return {
     outerArrayMap,
     innerArrayMap,
@@ -157,6 +157,10 @@ const displayController = (function () {
     playerTurn.innerHTML = `Player ${currentTurn} Wins!`;
   };
 
+  const renderDraw = () => {
+    playerTurn.innerHTML = "It's a draw!";
+  };
+
   const restartGame = () => {
     restartButton.addEventListener("click", () => {
       const allBoardCells = gameBoardContainer.querySelectorAll("div");
@@ -178,5 +182,12 @@ const displayController = (function () {
   };
   restartGame();
   renderBoard();
-  return { renderBoard, renderSelction, renderTurn, renderWinner, restartGame };
+  return {
+    renderBoard,
+    renderSelction,
+    renderTurn,
+    renderWinner,
+    restartGame,
+    renderDraw,
+  };
 })();
