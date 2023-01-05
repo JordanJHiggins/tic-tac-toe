@@ -41,6 +41,7 @@ html {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  background-color: #ecfdf5;
 }
 
 #game-board {
@@ -55,6 +56,7 @@ html {
 [data-board-cell] {
   font-size: 5rem;
   color: #047857;
+  background-color: #d1fae5;
   border: 1px solid #064e3b;
   display: flex;
   justify-content: center;
@@ -62,7 +64,7 @@ html {
 }
 
 [data-board-cell]:hover {
-  background-color: #d1fae5;
+  background-color: #a7f3d0;
 }
 
 .restart-button {
@@ -70,6 +72,6 @@ html {
   color: #ecfdf5;
   padding: 1rem;
   border: none;
-  border-radius: 10px;
-  min-width: 100px;
+  border-radius: 25px;
+  min-width: 10vw;
 }
